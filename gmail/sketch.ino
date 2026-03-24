@@ -13,24 +13,23 @@ struct WifiCredential {
 };
 
 WifiCredential credentials[] = {
-  {"SSID1", "SSID1_PASSWORD"},
-  {"SSID2", "SSID2_PASSWORD"},
+  {"YOUR_WIFI_SSID", "YOUR_WIFI_PASSWORD"},
   // You can add more networks here, e.g.:
-  // {"MyOtherWifi", "ItsPassword123"}
+  // {"AnotherSSID", "AnotherPassword"}
 };
 
 // --- Pin Definitions ---
 #define REED_PIN 23
 #define LED_PIN 2 // Built-in LED on most ESP32 boards
 
-// --- SMTP Server Credentials ---
+// --- SMTP Server Credentials (Gmail) ---
 #define SMTP_HOST "smtp.gmail.com"
 #define SMTP_PORT 465
-#define AUTHOR_EMAIL "AUTHOR_EMAIL"
-#define AUTHOR_PASSWORD "APP_PASSWORD" // IMPORTANT: Use an App Password for Gmail!
+#define AUTHOR_EMAIL "your.email@gmail.com"
+#define AUTHOR_PASSWORD "YOUR_GMAIL_APP_PASSWORD" // Use a Google App Password, NOT your regular password!
 
 // --- Recipient ---
-#define RECIPIENT_EMAIL "RECIPIENT_EMAIL"
+#define RECIPIENT_EMAIL "recipient@example.com"
 
 
 //======================================================================
@@ -53,7 +52,7 @@ void blinkLed(int times, int blinkDelay);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("\n--- ESP32 Reed Switch Email Notifier ---");
+  Serial.println("\n--- ESP32 Reed Switch Email Notifier (Gmail) ---");
 
   pinMode(REED_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
