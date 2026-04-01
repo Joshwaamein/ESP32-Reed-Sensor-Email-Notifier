@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ESP_Mail_Client.h>
+#include <time.h>
 
 //======================================================================
 // USER CONFIGURATION
@@ -48,6 +49,7 @@ unsigned long debounceDelay = 50;
 // Function prototypes
 void smtpCallback(SMTP_Status status);
 void connectToWiFi();
+void syncTime();
 void sendEmailNotification(String status);
 void blinkLed(int times, int blinkDelay);
 
@@ -65,6 +67,7 @@ void setup() {
   Serial.println(lastReedState == HIGH ? "Open" : "Closed");
 
   connectToWiFi();
+  syncTime();
 
   smtp.debug(1);
   smtp.callback(smtpCallback);
@@ -96,6 +99,7 @@ void loop() {
       } else {
         Serial.println("WiFi disconnected. Cannot send email. Attempting to reconnect...");
         connectToWiFi();
+        syncTime();
       }
     }
   }
@@ -143,6 +147,27 @@ void connectToWiFi() {
   ESP.restart();
 }
 
+void syncTime() {
+  Serial.println("Syncing time via NTP...");
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+
+  time_t now = time(nullptr);
+  unsigned long startAttempt = millis();
+  while (now < 1000000000UL && millis() - startAttempt < 15000) {
+    delay(250);
+    now = time(nullptr);
+  }
+
+  if (now < 1000000000UL) {
+    Serial.println("WARNING: Failed to sync time via NTP. Email sending may fail.");
+  } else {
+    struct tm timeinfo;
+    gmtime_r(&now, &timeinfo);
+    Serial.print("Time synced: ");
+    Serial.println(asctime(&timeinfo));
+  }
+}
+
 void sendEmailNotification(String status) {
   Serial.println("Preparing to send email...");
 
@@ -153,6 +178,12 @@ void sendEmailNotification(String status) {
   session.login.password = AUTHOR_PASSWORD;
   session.login.user_domain = "";
   session.secure.startTLS = true;
+
+  // NTP time config for TLS certificate validation
+  session.time.ntp_server_f1 = "pool.ntp.org";
+  session.time.ntp_server_f2 = "time.nist.gov";
+  session.time.gmt_offset = 0;
+  session.time.day_light_offset = 0;
 
   SMTP_Message message;
   message.sender.name = "ESP32 Door Sensor";
