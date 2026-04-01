@@ -180,8 +180,7 @@ void sendEmailNotification(String status) {
   session.secure.startTLS = true;
 
   // NTP time config for TLS certificate validation
-  session.time.ntp_server_f1 = "pool.ntp.org";
-  session.time.ntp_server_f2 = "time.nist.gov";
+  session.time.ntp_server = "pool.ntp.org";
   session.time.gmt_offset = 0;
   session.time.day_light_offset = 0;
 
