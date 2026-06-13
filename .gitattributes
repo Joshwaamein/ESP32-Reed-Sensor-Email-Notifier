@@ -1,0 +1,7 @@
+# Normalise line endings to LF in the repo to stop CRLF drift from
+# editors/IDEs (e.g. Arduino IDE on Windows) showing as spurious diffs.
+* text=auto eol=lf
+
+# Treat Arduino sketches and docs as text.
+*.ino text eol=lf
+*.md  text eol=lf
